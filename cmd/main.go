@@ -4,7 +4,9 @@ import (
 	"context"
 	"github.com/anonimpopov/WTFTest/config"
 	"github.com/anonimpopov/WTFTest/internal/handlers"
+	"github.com/anonimpopov/WTFTest/internal/repository/firstRealistation"
 	"github.com/anonimpopov/WTFTest/internal/server"
+	"github.com/anonimpopov/WTFTest/internal/service/metric"
 	"github.com/anonimpopov/WTFTest/pkg/mongo"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -24,8 +26,12 @@ func main() {
 	if err != nil {
 		logrus.Fatalf("cant connect to mongodb: %v", err)
 	}
+	db := mongoClient.Database(cfg.Mongo.Database)
 
-	router := handlers.New()
+	metricsRepo := firstRealistation.New(db.Collection("pixi1"))
+	metricsService := metric.New(metricsRepo)
+
+	router := handlers.New(metricsService)
 
 	srv, shutdownChan := server.New(cfg.Server.Port, router.InitRouter())
 
