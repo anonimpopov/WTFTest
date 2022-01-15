@@ -1,0 +1,7 @@
+server:
+  Port: ":8080"
+  Mode: "Development"
+
+mongo:
+  URL: "mongodb://mongo:27017/"
+  Database: "pixel"

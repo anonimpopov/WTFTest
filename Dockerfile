@@ -12,6 +12,7 @@ RUN go build -o ./bin/app cmd/main.go
 FROM alpine:3.14
 
 WORKDIR /app
+COPY --from=builder /app/config/config-local.yml ./config/config-local.yml
 COPY --from=builder /app/bin/app /app/serve
 
 ENTRYPOINT /app/serve
