@@ -10,23 +10,23 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type DatabaseObject struct {
+type databaseObject struct {
 	Total     int                       `bson:"total" json:"total"`
 	Actions   map[string]map[string]int `bson:"actions" json:"actions"`
 	Countries map[string]map[string]int `bson:"countries" json:"countries"`
 }
 
-type Repository struct {
+type repository struct {
 	db     *mongo.Collection
 	itemId primitive.ObjectID
 }
 
-func New(db *mongo.Collection) *Repository {
-	return &Repository{db, primitive.ObjectID{}}
+func New(db *mongo.Collection) *repository {
+	return &repository{db, primitive.ObjectID{}}
 }
 
-func (r *Repository) Init() error {
-	res, err := r.db.InsertOne(context.TODO(), DatabaseObject{0, make(map[string]map[string]int), make(map[string]map[string]int)})
+func (r *repository) Init() error {
+	res, err := r.db.InsertOne(context.TODO(), databaseObject{0, make(map[string]map[string]int), make(map[string]map[string]int)})
 	if err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func (r *Repository) Init() error {
 	return nil
 }
 
-func (r *Repository) SaveAction(ctx context.Context, action models.Action) error {
+func (r *repository) SaveAction(ctx context.Context, action models.Action) error {
 	update := bson.D{
 		{"$inc", bson.D{
 			{"total", 1},
