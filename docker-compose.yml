@@ -26,5 +26,16 @@ services:
     ports:
       - "27017:27017"
 
+  mongo_admin:
+    image: mongo-express:1.0.0-alpha.4
+    container_name: mongo_admin
+    restart: always
+    networks:
+      - app
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongo
+    ports:
+      - '8081:8081'
+
 networks:
   app:

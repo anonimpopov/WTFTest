@@ -29,6 +29,10 @@ func main() {
 	db := mongoClient.Database(cfg.Mongo.Database)
 
 	metricsRepo := firstRealistation.New(db.Collection("pixi1"))
+	if err := metricsRepo.InitItem(); err != nil {
+		logrus.Fatalf("error during init repo: %v", err)
+	}
+
 	metricsService := metric.New(metricsRepo)
 
 	router := handlers.New(metricsService)

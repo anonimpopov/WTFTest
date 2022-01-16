@@ -1,6 +1,9 @@
 package metric
 
-import "github.com/anonimpopov/WTFTest/internal/models"
+import (
+	"context"
+	"github.com/anonimpopov/WTFTest/internal/models"
+)
 
 type SaverAndReader interface {
 	Saver
@@ -8,7 +11,7 @@ type SaverAndReader interface {
 }
 
 type Saver interface {
-	SaveAction(metric models.Action) error
+	SaveAction(context.Context, models.Action) error
 }
 
 type Reader interface {
@@ -20,4 +23,8 @@ type Service struct {
 
 func New(repo SaverAndReader) *Service {
 	return &Service{repo}
+}
+
+func (s *Service) SaveMetric(ctx context.Context, action models.Action) error {
+	return s.repo.SaveAction(ctx, action)
 }
