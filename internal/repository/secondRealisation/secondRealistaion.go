@@ -11,13 +11,13 @@ import (
 )
 
 type ActionObject struct {
-	Total     int `bson:"total"`
+	Total     int `bson:"total" json:"total"`
 	Countries map[string]map[string]int
 }
 
 type DatabaseObject struct {
-	Total   int                     `bson:"total"`
-	Actions map[string]ActionObject `bson:"actions"`
+	Total   int                      `bson:"total" json:"total"`
+	Actions map[string]*ActionObject `bson:"actions" json:"actions"`
 }
 
 type Repository struct {
@@ -30,7 +30,7 @@ func New(db *mongo.Collection) *Repository {
 }
 
 func (r *Repository) Init() error {
-	res, err := r.db.InsertOne(context.TODO(), DatabaseObject{0, make(map[string]ActionObject)})
+	res, err := r.db.InsertOne(context.TODO(), DatabaseObject{0, make(map[string]*ActionObject)})
 	if err != nil {
 		return err
 	}

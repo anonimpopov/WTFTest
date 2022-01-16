@@ -10,13 +10,21 @@ type Saver interface {
 }
 
 type Service struct {
-	repo Saver
+	repo1 Saver
+	repo2 Saver
 }
 
-func New(repo Saver) *Service {
-	return &Service{repo}
+func New(repo1 Saver, repo2 Saver) *Service {
+	return &Service{repo1, repo2}
 }
 
-func (s *Service) SaveMetric(ctx context.Context, action models.Action) error {
-	return s.repo.SaveAction(ctx, action)
+func (s *Service) SaveMetric(ctx context.Context, action models.Action, version int) error {
+	switch version {
+	case 1:
+		return s.repo1.SaveAction(ctx, action)
+	case 2:
+		return s.repo2.SaveAction(ctx, action)
+	}
+
+	return nil
 }

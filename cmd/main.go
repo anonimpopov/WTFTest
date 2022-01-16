@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/anonimpopov/WTFTest/config"
 	"github.com/anonimpopov/WTFTest/internal/handlers"
+	"github.com/anonimpopov/WTFTest/internal/repository/firstRealisation"
 	"github.com/anonimpopov/WTFTest/internal/repository/secondRealisation"
 	"github.com/anonimpopov/WTFTest/internal/repository/thirdRealisation"
 	"github.com/anonimpopov/WTFTest/internal/server"
@@ -30,21 +31,24 @@ func main() {
 	}
 	db := mongoClient.Database(cfg.Mongo.Database)
 
-	//metricsRepo := firstRealisation.New(db.Collection("pixi1"))
-	metricsRepo := secondRealisation.New(db.Collection("pixi2"))
+	metricsRepo1 := firstRealisation.New(db.Collection("pixi1"))
+	metricsRepo2 := secondRealisation.New(db.Collection("pixi2"))
 	metricsBatchRepo := thirdRealisation.New(db.Collection("pixi3"))
+
+	if err := metricsRepo1.Init(); err != nil {
+		logrus.Fatalf("cant init repo1: %v", err)
+	}
+	if err := metricsRepo2.Init(); err != nil {
+		logrus.Fatalf("cant init repo2: %v", err)
+	}
 	stopMetricBatchChan := metricsBatchRepo.Init()
 
-	if err := metricsRepo.Init(); err != nil {
-		logrus.Fatalf("error during init repo: %v", err)
-	}
+	metricsService := metric.New(metricsRepo1, metricsRepo2)
+	metricsBatchService := metricBatch.New(metricsBatchRepo)
 
-	metricsService := metric.New(metricsRepo)
-	meticsBatchService := metricBatch.New(metricsBatchRepo)
-	router := handlers.New(metricsService, meticsBatchService)
+	router := handlers.New(metricsService, metricsBatchService)
 
 	srv, shutdownChan := server.New(cfg.Server.Port, router.InitRouter())
-
 	go func() {
 		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
 			logrus.Errorf("ListenAndServe error: %v", err)

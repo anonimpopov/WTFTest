@@ -10,7 +10,7 @@ type SaverAndReader interface {
 	Reader
 }
 type Saver interface {
-	SaveAction(models.Action) error
+	SaveAction(models.Action)
 }
 
 type Reader interface {
@@ -25,8 +25,8 @@ func New(repo SaverAndReader) *Service {
 	return &Service{repo}
 }
 
-func (s *Service) SaveMetric(action models.Action) error {
-	return s.repo.SaveAction(action)
+func (s *Service) SaveMetric(action models.Action) {
+	s.repo.SaveAction(action)
 }
 
 func (s *Service) GetMetrics(ctx context.Context, from int64, to int64) ([]byte, error) {

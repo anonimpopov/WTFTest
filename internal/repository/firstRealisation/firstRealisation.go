@@ -11,9 +11,9 @@ import (
 )
 
 type DatabaseObject struct {
-	Total     int                       `bson:"total"`
-	Actions   map[string]map[string]int `bson:"actions"`
-	Countries map[string]map[string]int `bson:"countries"`
+	Total     int                       `bson:"total" json:"total"`
+	Actions   map[string]map[string]int `bson:"actions" json:"actions"`
+	Countries map[string]map[string]int `bson:"countries" json:"countries"`
 }
 
 type Repository struct {
