@@ -5,8 +5,10 @@ import (
 	"github.com/anonimpopov/WTFTest/config"
 	"github.com/anonimpopov/WTFTest/internal/handlers"
 	"github.com/anonimpopov/WTFTest/internal/repository/secondRealisation"
+	"github.com/anonimpopov/WTFTest/internal/repository/thirdRealisation"
 	"github.com/anonimpopov/WTFTest/internal/server"
 	"github.com/anonimpopov/WTFTest/internal/service/metric"
+	"github.com/anonimpopov/WTFTest/internal/service/metricBatch"
 	"github.com/anonimpopov/WTFTest/pkg/mongo"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -28,15 +30,18 @@ func main() {
 	}
 	db := mongoClient.Database(cfg.Mongo.Database)
 
-	//metricsRepo := firstRealistation.New(db.Collection("pixi1"))
+	//metricsRepo := firstRealisation.New(db.Collection("pixi1"))
 	metricsRepo := secondRealisation.New(db.Collection("pixi2"))
-	if err := metricsRepo.InitItem(); err != nil {
+	metricsBatchRepo := thirdRealisation.New(db.Collection("pixi3"))
+	stopMetricBatchChan := metricsBatchRepo.Init()
+
+	if err := metricsRepo.Init(); err != nil {
 		logrus.Fatalf("error during init repo: %v", err)
 	}
 
 	metricsService := metric.New(metricsRepo)
-
-	router := handlers.New(metricsService)
+	meticsBatchService := metricBatch.New(metricsBatchRepo)
+	router := handlers.New(metricsService, meticsBatchService)
 
 	srv, shutdownChan := server.New(cfg.Server.Port, router.InitRouter())
 
@@ -54,4 +59,5 @@ func main() {
 	if err := mongoClient.Disconnect(shutdownContext); err != nil {
 		logrus.Errorf("error occured on mongodb connection close: %v", err)
 	}
+	stopMetricBatchChan <- true
 }

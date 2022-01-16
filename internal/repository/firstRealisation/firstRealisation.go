@@ -1,4 +1,4 @@
-package firstRealistation
+package firstRealisation
 
 import (
 	"context"
@@ -25,7 +25,7 @@ func New(db *mongo.Collection) *Repository {
 	return &Repository{db, primitive.ObjectID{}}
 }
 
-func (r *Repository) InitItem() error {
+func (r *Repository) Init() error {
 	res, err := r.db.InsertOne(context.TODO(), DatabaseObject{0, make(map[string]map[string]int), make(map[string]map[string]int)})
 	if err != nil {
 		return err

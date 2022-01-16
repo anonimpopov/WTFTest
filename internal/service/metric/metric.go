@@ -5,23 +5,15 @@ import (
 	"github.com/anonimpopov/WTFTest/internal/models"
 )
 
-type SaverAndReader interface {
-	Saver
-	Reader
-}
-
 type Saver interface {
 	SaveAction(context.Context, models.Action) error
 }
 
-type Reader interface {
-}
-
 type Service struct {
-	repo SaverAndReader
+	repo Saver
 }
 
-func New(repo SaverAndReader) *Service {
+func New(repo Saver) *Service {
 	return &Service{repo}
 }
 

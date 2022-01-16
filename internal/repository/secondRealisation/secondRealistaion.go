@@ -29,7 +29,7 @@ func New(db *mongo.Collection) *Repository {
 	return &Repository{db, primitive.ObjectID{}}
 }
 
-func (r *Repository) InitItem() error {
+func (r *Repository) Init() error {
 	res, err := r.db.InsertOne(context.TODO(), DatabaseObject{0, make(map[string]ActionObject)})
 	if err != nil {
 		return err
