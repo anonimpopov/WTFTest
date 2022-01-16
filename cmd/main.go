@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/anonimpopov/WTFTest/config"
 	"github.com/anonimpopov/WTFTest/internal/handlers"
-	"github.com/anonimpopov/WTFTest/internal/repository/firstRealistation"
+	"github.com/anonimpopov/WTFTest/internal/repository/secondRealisation"
 	"github.com/anonimpopov/WTFTest/internal/server"
 	"github.com/anonimpopov/WTFTest/internal/service/metric"
 	"github.com/anonimpopov/WTFTest/pkg/mongo"
@@ -28,7 +28,8 @@ func main() {
 	}
 	db := mongoClient.Database(cfg.Mongo.Database)
 
-	metricsRepo := firstRealistation.New(db.Collection("pixi1"))
+	//metricsRepo := firstRealistation.New(db.Collection("pixi1"))
+	metricsRepo := secondRealisation.New(db.Collection("pixi2"))
 	if err := metricsRepo.InitItem(); err != nil {
 		logrus.Fatalf("error during init repo: %v", err)
 	}
