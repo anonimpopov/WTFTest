@@ -16,13 +16,13 @@
 
 ## Routes
 
-###Задание 1
+### Задание 1
 >> http://localhost:8080/v1/counter.gif?action={action}&country={country}
 >
 > Сохраняет в коллекцию pixi1
 
 
-###Задание 2
+### Задание 2
 >> http://localhost:8080/v2/counter.gif?action={action}&country={country}
 >
 >Сохраняет в коллекцию pixi2
